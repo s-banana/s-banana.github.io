@@ -92,7 +92,9 @@
     "hosp-0-7": 3990,
     "hosp-0-8": 1678
   },
-  "buyer": {},
+  "buyer": {
+    "high-5-0": "しんや"
+  },
   "customItems": {
     "high-2": [
       {

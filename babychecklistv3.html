@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>出産準備チェックリスト</title>
+<style>
+  :root{
+    --bg:#FBF7F2;
+    --surface:#FFFFFF;
+    --ink:#33303A;
+    --ink-soft:#8D8794;
+    --ink-faint:#B9B2C0;
+    --line:#EFE8E0;
+
+    --high:#FF8F73;
+    --high-bg:#FFE9E2;
+    --high-deep:#E8724F;
+
+    --mid:#5FB68A;
+    --mid-bg:#E4F5EC;
+    --mid-deep:#3F9A6E;
+
+    --hosp:#6E93D6;
+    --hosp-bg:#E7EEFC;
+    --hosp-deep:#4C74BD;
+
+    --gold:#F0B857;
+
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --shadow:0 4px 16px rgba(60,40,30,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 0%, #FFF1EC 0%, transparent 45%),
+      radial-gradient(circle at 90% 10%, #EAF2FF 0%, transparent 40%),
+      var(--bg);
+    font-family:"Hiragino Maru Gothic ProN","M PLUS Rounded 1c","Hiragino Sans","Yu Gothic",sans-serif;
+    color:var(--ink);
+    padding:0 0 70px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  header{
+    padding:30px 20px 22px;
+    position:relative;
+  }
+  header h1{
+    font-size:23px;
+    margin:0 0 4px;
+    letter-spacing:.01em;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  header .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  .tally-wrap{
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .tally-label{ font-size:13px; color:var(--ink); font-weight:700; }
+  #saveNotice{
+    font-size:11px;
+    font-weight:700;
+    color:var(--mid-deep);
+    background:var(--mid-bg);
+    padding:3px 10px;
+    border-radius:999px;
+  }
+  #saveNotice.is-error{
+    color:var(--high-deep);
+    background:var(--high-bg);
+  }
+  .progress-track{
+    margin-top:10px;
+    width:100%;
+    height:12px;
+    background:var(--surface);
+    border-radius:999px;
+    overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--line);
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--high), var(--gold) 55%, var(--mid));
+    border-radius:999px;
+    transition:width .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .save-row{
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .save-btn{
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:700;
+    color:#fff;
+    background:linear-gradient(135deg, var(--mid), var(--mid-deep));
+    border:none;
+    padding:8px 16px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .save-btn:active{ transform:scale(.96); }
+  .save-status{
+    font-size:11px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+
+  nav.tabs{
+    display:flex;
+    gap:6px;
+    margin:18px 20px 0;
+    padding:5px;
+    background:var(--surface);
+    border-radius:999px;
+    box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    flex:1 0 auto;
+    white-space:nowrap;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:700;
+    background:none;
+    border:none;
+    padding:9px 14px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    border-radius:999px;
+    transition:background .2s ease, color .2s ease;
+  }
+  nav.tabs button.active{
+    color:#fff;
+    background:linear-gradient(135deg, var(--high), var(--high-deep));
+  }
+
+  main{padding:18px 16px 0;}
+  section.panel{display:none;}
+  section.panel.active{display:block;}
+
+  .priority-title{
+    font-size:16px;
+    margin:6px 4px 14px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .priority-title .dot{
+    width:8px;height:8px;border-radius:50%;
+    display:inline-block;
+  }
+
+  .category{
+    margin-bottom:16px;
+    background:var(--surface);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .category .cat-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 16px;
+  }
+  .cat-icon{
+    width:32px; height:32px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px;
+    flex-shrink:0;
+  }
+  .category .cat-head h2{
+    font-size:14px;
+    margin:0;
+    font-weight:800;
+    flex:1;
+  }
+  .cat-progress{
+    font-size:11px;
+    font-weight:700;
+    color:var(--ink-soft);
+    background:var(--bg);
+    padding:3px 9px;
+    border-radius:999px;
+    flex-shrink:0;
+  }
+
+  table{ width:100%; border-collapse:collapse; }
+  tr{ border-top:1px solid var(--line); }
+  tr:first-child{ border-top:none; }
+  td{ padding:10px 12px; font-size:13.5px; vertical-align:middle; }
+  td.check-col{width:38px; text-align:center;}
+  td.note-col{ text-align:right; }
+
+  .note-tag{
+    display:inline-block;
+    font-size:11px;
+    color:var(--ink-soft);
+    background:var(--bg);
+    padding:3px 9px;
+    border-radius:999px;
+    white-space:nowrap;
+    cursor:pointer;
+  }
+  .note-input{
+    font-family:inherit;
+    font-size:11px;
+    color:var(--ink);
+    border:none;
+    border-bottom:2px solid var(--high);
+    background:transparent;
+    padding:0 0 2px;
+    width:90px;
+    text-align:right;
+    box-sizing:border-box;
+  }
+  .note-input:focus{ outline:none; }
+  .purchased-tag{
+    display:block;
+    font-size:10.5px;
+    color:var(--mid-deep);
+    background:var(--mid-bg);
+    padding:2px 8px;
+    border-radius:999px;
+    white-space:nowrap;
+    margin-top:4px;
+  }
+
+  .buy-btn{
+    border:none; background:var(--bg); cursor:pointer;
+    font-size:11px; color:var(--ink-soft);
+    margin-left:6px; padding:2px 6px;
+    border-radius:999px;
+    vertical-align:middle;
+  }
+  .buy-btn.has-buy{ color:var(--mid-deep); background:var(--mid-bg); }
+
+  tr.buy-row td{ padding:0 14px 14px; border-top:none; }
+  tr.buy-row.hidden{ display:none; }
+  .buy-form{ display:flex; gap:8px; flex-wrap:wrap; }
+  .buy-form input{
+    font-family:inherit;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius-sm);
+    background:var(--bg);
+    box-sizing:border-box;
+  }
+  .buy-form input.buy-store-input{ flex:1.2; min-width:120px; }
+  .buy-form input.buy-price-input{ flex:1; min-width:90px; }
+  .buy-form input.buy-buyer-input{ flex-basis:100%; }
+  .buy-form input:focus{ outline:none; border-color:var(--mid); }
+
+  .breakdown-row{
+    margin-top:8px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .breakdown-chip{
+    font-size:11px;
+    color:var(--mid-deep);
+    background:var(--mid-bg);
+    padding:3px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+
+  .total-row{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--surface);
+    padding:10px 14px;
+    border-radius:var(--radius-md);
+    box-shadow:var(--shadow);
+  }
+  .total-label{ font-size:12px; color:var(--ink-soft); font-weight:700; }
+  .total-value{ font-size:17px; color:var(--mid-deep); font-weight:800; }
+
+  .checkbox{
+    width:22px;height:22px;
+    border:2px solid var(--ink-faint);
+    border-radius:50%;
+    display:inline-block;
+    cursor:pointer;
+    position:relative;
+    transition:background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .checkbox:active{ transform:scale(.9); }
+  .checkbox.checked{ border-color:transparent; }
+  .checkbox.checked::after{
+    content:"";
+    position:absolute;
+    left:6px; top:2px;
+    width:6px; height:11px;
+    border:solid #fff;
+    border-width:0 2.5px 2.5px 0;
+    transform:rotate(40deg);
+  }
+
+  .item-text{ cursor:pointer; font-weight:600; }
+  .item-text.checked{ color:var(--ink-faint); text-decoration:line-through; font-weight:400; }
+
+  .memo-btn{
+    border:none; background:var(--bg); cursor:pointer;
+    font-size:11px; color:var(--ink-soft);
+    margin-left:6px; padding:2px 6px;
+    border-radius:999px;
+    vertical-align:middle;
+  }
+  .memo-btn.has-memo{ color:var(--high-deep); background:var(--high-bg); }
+
+  .rename-input{
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    border:none;
+    border-bottom:2px solid var(--high);
+    background:transparent;
+    padding:0 0 2px;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .rename-input:focus{ outline:none; }
+
+  .del-btn{
+    border:none; background:none; cursor:pointer;
+    font-size:14px; color:var(--ink-faint);
+    margin-left:4px; padding:0 4px;
+    vertical-align:middle;
+  }
+
+  .add-item-row td{ padding:10px 12px; }
+  .add-item-form{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .add-item-input{
+    flex:1;
+    font-family:inherit;
+    font-size:13px;
+    padding:8px 12px;
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius-sm);
+    background:var(--bg);
+    box-sizing:border-box;
+  }
+  .add-item-input:focus{ outline:none; border-color:var(--high); border-style:solid; }
+  .add-item-btn{
+    font-family:inherit;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    background:linear-gradient(135deg, var(--high), var(--high-deep));
+    border:none;
+    padding:8px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+
+  tr.memo-row td{ padding:0 14px 14px; border-top:none; }
+  tr.memo-row.hidden{ display:none; }
+  textarea.memo-input{
+    width:100%;
+    font-family:inherit;
+    font-size:12.5px;
+    padding:8px 10px;
+    border:1.5px solid var(--line);
+    border-radius:var(--radius-sm);
+    background:var(--bg);
+    resize:vertical;
+    min-height:36px;
+    box-sizing:border-box;
+  }
+  textarea.memo-input:focus{ outline:none; border-color:var(--high); }
+
+  footer{ padding:22px 20px 0; font-size:11px; color:var(--ink-soft); line-height:1.6; }
+
+  .price-note{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+    line-height:1.6;
+    background:var(--surface);
+    padding:12px 14px;
+    border-radius:var(--radius-md);
+    box-shadow:var(--shadow);
+  }
+  table.price-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 8px;
+  }
+  table.price-table th{
+    text-align:left;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    padding:0 10px 4px;
+    font-weight:800;
+  }
+  table.price-table tr:not(:first-child){
+    background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+  table.price-table td{
+    font-size:12.5px;
+    padding:12px 10px;
+    vertical-align:top;
+  }
+  table.price-table tr:not(:first-child) td:first-child{ border-radius:var(--radius-sm) 0 0 var(--radius-sm); }
+  table.price-table tr:not(:first-child) td:last-child{ border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+  table.price-table td.item-name{ font-weight:800; width:26%; }
+  table.price-table td.cheapest{ color:var(--mid-deep); font-weight:800; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" style="display:inline-block;margin-bottom:10px;font-size:12.5px;font-weight:700;color:var(--mid-deep);text-decoration:none;">← Topページに戻る</a>
+  <h1>👶 出産準備チェックリスト</h1>
+  <p class="sub">出産準備の進捗管理</p>
+  <div class="tally-wrap">
+    <span class="tally-label" id="tallyLabel">進捗 0 / 0</span>
+    <span id="saveNotice" style="opacity:0;transition:opacity .3s;"></span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="total-row">
+    <span class="total-label">💰 購入済み合計</span>
+    <span class="total-value" id="totalValue">¥0</span>
+  </div>
+  <div class="breakdown-row" id="breakdownRow"></div>
+  <div class="save-row">
+    <button type="button" class="save-btn" id="manualSaveBtn">💾 今すぐ保存して確認</button>
+    <button type="button" class="save-btn" id="tokenSetupBtn" style="background:linear-gradient(135deg, var(--hosp), var(--hosp-deep));">🔑 GitHubトークン設定</button>
+    <span class="save-status" id="saveStatus"></span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-panel="p-high">必須</button>
+  <button class="tab-btn" data-panel="p-mid">あると便利</button>
+  <button class="tab-btn" data-panel="p-hosp">入院バッグ</button>
+  <button class="tab-btn" data-panel="p-price">価格比較</button>
+</nav>
+
+<main>
+  <section class="panel active" id="p-high"></section>
+  <section class="panel" id="p-mid"></section>
+  <section class="panel" id="p-hosp"></section>
+  <section class="panel" id="p-price"></section>
+</main>
+
+<footer>タップでチェックのオン/オフ、✏️で名前変更、💬でメモ、💰で購入店舗・金額を記録できます。購入予定の店舗（右側のタグ）もタップで編集できます。内容はGitHubリポジトリ（s-banana/s-banana.github.io）に保存されます。初めて使う端末では🔑ボタンからGitHub Personal Access Tokenを入力してください（そのブラウザにだけ保存され、コードには含まれません）。</footer>
+
+<script>
+var DATA = {
+  high: {
+    title: "必須（優先度：高）",
+    band: "#B5573F", bandBg: "#F5E4DD",
+    cats: [
+      { name:"ねんね用品", items:[
+        {t:"ベビーベッド", n:"要リサーチ", done:false},
+        {t:"敷布団（掛け布団・枕は後日）", n:"楽天", done:false},
+        {t:"タオルケット", n:"おくるみと兼用", done:false},
+        {t:"ベビーマット", n:"楽天", done:false}
+      ]},
+      { name:"おむつ・おしりケア", items:[
+        {t:"紙おむつ（新生児用）", n:"出産直前", done:false},
+        {t:"おしりふき", n:"コストコ", done:true, buyStore:"コストコ", price:3188},
+        {t:"おむつ替えシート", n:"", done:false},
+        {t:"おむつ用ゴミ袋（パン袋）", n:"楽天", done:false},
+        {t:"おむつ収納ケース", n:"", done:true},
+        {t:"おむつ用ゴミ箱（オムニウッディ）", n:"楽天", done:false}
+      ]},
+      { name:"授乳用品", items:[
+        {t:"哺乳びん", n:"楽天", done:false},
+        {t:"粉ミルク", n:"出産直前", done:false},
+        {t:"哺乳びんブラシ", n:"楽天", done:false},
+        {t:"哺乳瓶洗い", n:"西松屋", done:true, buyStore:"西松屋", price:739},
+        {t:"哺乳びん除菌グッズ", n:"アカチャンホンポ", done:false},
+        {t:"母乳パッド", n:"西松屋", done:true, buyStore:"西松屋", price:799},
+        {t:"授乳まくら", n:"", done:true, isCustom:true, buyStore:"楽天", price:4131}
+      ]},
+      { name:"ベビー服", items:[
+        {t:"コンビ肌着（4枚）", n:"ユニクロ・4枚済", done:true, buyStore:"ユニクロ", price:3790},
+        {t:"ツーウェイオール", n:"バースデイ・1枚済", done:false},
+        {t:"セレモニードレス", n:"西松屋", done:true, buyStore:"バースデイ", price:1969},
+        {t:"おくるみ（エイデンアンドアネイ）", n:"楽天", done:false},
+        {t:"帽子", n:"バースデイ", done:false},
+        {t:"スタイ（コニー）", n:"", done:true, buyStore:"楽天", price:3240},
+        {t:"ハンガー", n:"西松屋", done:true, buyStore:"西松屋", price:679},
+        {t:"コンビ肌着（2枚）", n:"", done:true, isCustom:true, buyStore:"ユニクロ", price:1500}
+      ]},
+      { name:"お風呂・衛生用品", items:[
+        {t:"ベビーバス", n:"", done:true},
+        {t:"沐浴布（ガーゼ）", n:"ガーゼハンカチで代用", done:false},
+        {t:"ベビーソープ（ミノン）", n:"西松屋", done:true, buyStore:"西松屋", price:979},
+        {t:"保湿剤", n:"要リサーチ／楽天", done:false},
+        {t:"お手入れセット（爪切り、くし、ピンセット）", n:"西松屋", done:true, buyStore:"西松屋", price:1379},
+        {t:"綿棒", n:"西松屋", done:true, buyStore:"西松屋", price:339},
+        {t:"ガーゼハンカチ", n:"西松屋・5枚済", done:false},
+        {t:"ベビーワセリン", n:"西松屋", done:false, isCustom:true}
+      ]},
+      { name:"お出かけ・移動", items:[
+        {t:"チャイルドシート", n:"要リサーチ", done:true, buyStore:"KATOJI", price:36850}
+      ]}
+    ]
+  },
+  mid: {
+    title: "あると便利（優先度：中）",
+    band: "#6E8A63", bandBg: "#E7EEE0",
+    cats: [
+      { name:"ねんね・あやし", items:[
+        {t:"スリーパー", n:"寝返り開始後", done:false},
+        {t:"メリー", n:"楽天？", done:false},
+        {t:"スワドル", n:"楽天", done:false}
+      ]},
+      { name:"お出かけ", items:[
+        {t:"ベビーカー", n:"要リサーチ", done:false},
+        {t:"抱っこひも", n:"コニー使用後に検討", done:false},
+        {t:"抱っこひも（セカンド）", n:"コニー公式", done:true, buyStore:"楽天", price:6939},
+        {t:"ベビーカーフック", n:"", done:false},
+        {t:"カーステッカー", n:"", done:false},
+        {t:"お出かけバッグ", n:"西松屋", done:true, isCustom:true, buyStore:"西松屋", price:2727},
+        {t:"母子手帳ケース", n:"西松屋", done:true, isCustom:true, buyStore:"西松屋", price:1699},
+        {t:"腹帯", n:"", done:true, isCustom:true, buyStore:"アカチャンホンポ", price:2618},
+        {t:"骨盤ベルト", n:"", done:true, isCustom:true, buyStore:"アカチャンホンポ", price:5280}
+      ]},
+      { name:"授乳サポート", items:[
+        {t:"搾乳機", n:"要リサーチ", done:false},
+        {t:"授乳ライト", n:"要リサーチ", done:false},
+        {t:"円座クッション", n:"実家にある？", done:false},
+        {t:"乳頭ケア用品", n:"", done:true}
+      ]},
+      { name:"お部屋環境", items:[
+        {t:"温湿度計", n:"", done:true},
+        {t:"おむつストッカー", n:"", done:true, isCustom:true, buyStore:"楽天", price:2831},
+        {t:"その他①", n:"", done:true, isCustom:true, buyStore:"バースデイ", price:9075},
+        {t:"棚類", n:"", done:true, isCustom:true, buyStore:"IKEA", price:26494},
+        {t:"本", n:"", done:true, isCustom:true, buyStore:"積分館", price:2640},
+        {t:"その他②", n:"", done:true, isCustom:true, buyStore:"西松屋", price:9445}
+      ]}
+    ]
+  },
+  hosp: {
+    title: "入院バッグ（ママ用）",
+    band: "#4C6E8A", bandBg: "#DEE7ED",
+    cats: [
+      { name:"入院前に準備", items:[
+        {t:"母子手帳", n:"", done:false},
+        {t:"健康保険証", n:"", done:false},
+        {t:"診察券", n:"", done:false},
+        {t:"入院書類", n:"", done:false},
+        {t:"スマホ", n:"", done:false},
+        {t:"スマホ充電器", n:"", done:false},
+        {t:"メガネ", n:"", done:true},
+        {t:"前開きパジャマ", n:"あと1着・バースデイ/西松屋", done:true, buyStore:"無印", price:3990},
+        {t:"授乳ブラ", n:"あと2着・バースデイ/西松屋", done:true, buyStore:"西松屋", price:1678},
+        {t:"産褥ショーツ", n:"", done:true},
+        {t:"産褥パッド", n:"西松屋", done:false},
+        {t:"ペットボトル用ストローキャップ", n:"", done:true},
+        {t:"テニスボール", n:"", done:true},
+        {t:"うちわ・ハンディファン", n:"", done:true}
+      ]}
+    ]
+  }
+};
+
+function addMemoField(dataObj){
+  var keys = Object.keys(dataObj);
+  for (var k = 0; k < keys.length; k++){
+    var cats = dataObj[keys[k]].cats;
+    for (var ci = 0; ci < cats.length; ci++){
+      for (var ii = 0; ii < cats[ci].items.length; ii++){
+        var it = cats[ci].items[ii];
+        if (typeof it.memo === "undefined") it.memo = "";
+        if (typeof it.isCustom === "undefined") it.isCustom = false;
+        if (typeof it.buyStore === "undefined") it.buyStore = "";
+        if (typeof it.price === "undefined") it.price = "";
+        if (typeof it.buyer === "undefined") it.buyer = "";
+      }
+    }
+  }
+}
+addMemoField(DATA);
+
+var DEFAULT_TEXT = {};
+var DEFAULT_NOTE = {};
+(function captureDefaultText(){
+  var keys = Object.keys(DATA);
+  for (var k = 0; k < keys.length; k++){
+    var cats = DATA[keys[k]].cats;
+    for (var ci = 0; ci < cats.length; ci++){
+      for (var ii = 0; ii < cats[ci].items.length; ii++){
+        var id = keys[k] + "-" + ci + "-" + ii;
+        DEFAULT_TEXT[id] = cats[ci].items[ii].t;
+        DEFAULT_NOTE[id] = cats[ci].items[ii].n;
+      }
+    }
+  }
+})();
+
+var PANEL_MAP = { high:"p-high", mid:"p-mid", hosp:"p-hosp" };
+
+var PRICE_DATA = [
+  { name:"ベビーベッド", amazon:"5,000〜25,000円", nishimatsuya:"5,000〜20,000円", rakuten:"4,500〜27,000円", cheapest:"nishimatsuya", memo:"添い寝タイプは安め、据置き型は高め" },
+  { name:"おむつ替えシート", amazon:"900〜2,000円", nishimatsuya:"約1,300円", rakuten:"800〜2,000円", cheapest:"rakuten", memo:"" },
+  { name:"保湿剤（ベビーワセリン等）", amazon:"500〜1,400円", nishimatsuya:"548円〜", rakuten:"400〜1,500円", cheapest:"nishimatsuya", memo:"西松屋オリジナルが手頃" },
+  { name:"チャイルドシート", amazon:"30,000〜60,000円", nishimatsuya:"店頭中心・要確認", rakuten:"25,000〜40,000円", cheapest:"rakuten", memo:"回転式・ISOFIXは高め" },
+  { name:"メリー", amazon:"2,000〜6,000円", nishimatsuya:"1,500〜3,000円", rakuten:"2,000〜6,000円", cheapest:"nishimatsuya", memo:"SmartAngelが安め" },
+  { name:"ベビーカー", amazon:"35,000〜60,000円", nishimatsuya:"7,000〜20,000円", rakuten:"30,000〜65,000円", cheapest:"nishimatsuya", memo:"西松屋は普及モデル中心" },
+  { name:"ベビーカーフック", amazon:"700〜1,500円", nishimatsuya:"500〜1,000円", rakuten:"600〜1,500円", cheapest:"nishimatsuya", memo:"" },
+  { name:"カーステッカー", amazon:"300〜800円", nishimatsuya:"300〜600円", rakuten:"300〜800円", cheapest:"nishimatsuya", memo:"" },
+  { name:"搾乳機（電動）", amazon:"5,000〜35,000円", nishimatsuya:"手動中心・電動は少なめ", rakuten:"5,000〜36,000円", cheapest:"amazon", memo:"ハンズフリー型は高め" },
+  { name:"授乳ライト", amazon:"2,000〜5,000円", nishimatsuya:"取扱い少なめ", rakuten:"2,000〜5,000円", cheapest:"amazon", memo:"ニトリ・無印でも代用可" }
+];
+
+function renderPriceComparison(){
+  var panel = document.getElementById("p-price");
+  panel.innerHTML = "";
+
+  var note = document.createElement("p");
+  note.className = "price-note";
+  note.textContent = "店舗未定・要リサーチだった項目のみ、参考価格帯をまとめました。実売価格は商品・モデルによって幅があるため、購入前に最新価格をご確認ください（調査時点の目安です）。緑色が比較的安い店舗の目安です。";
+  panel.appendChild(note);
+
+  var table = document.createElement("table");
+  table.className = "price-table";
+  var thead = document.createElement("tr");
+  ["項目","Amazon","西松屋","楽天"].forEach(function(h){
+    var th = document.createElement("th");
+    th.textContent = h;
+    thead.appendChild(th);
+  });
+  table.appendChild(thead);
+
+  PRICE_DATA.forEach(function(row){
+    var tr = document.createElement("tr");
+
+    var tdName = document.createElement("td");
+    tdName.className = "item-name";
+    tdName.textContent = row.name;
+    if (row.memo) {
+      var memoSpan = document.createElement("span");
+      memoSpan.style.cssText = "display:block;font-weight:normal;font-size:11px;color:var(--ink-soft);margin-top:2px;";
+      memoSpan.textContent = row.memo;
+      tdName.appendChild(memoSpan);
+    }
+    tr.appendChild(tdName);
+
+    ["amazon","nishimatsuya","rakuten"].forEach(function(storeKey){
+      var td = document.createElement("td");
+      if (row.cheapest === storeKey) td.className = "cheapest";
+      td.textContent = row[storeKey];
+      tr.appendChild(td);
+    });
+
+    table.appendChild(tr);
+  });
+  panel.appendChild(table);
+}
+
+var CATEGORY_ICONS = {
+  "ねんね用品":"🛏️", "おむつ・おしりケア":"🧷", "授乳用品":"🍼", "ベビー服":"👕",
+  "お風呂・衛生用品":"🛁", "お出かけ・移動":"🚗", "ねんね・あやし":"🎵", "お出かけ":"🚼",
+  "授乳サポート":"🤱", "お部屋環境":"🌡️", "入院前に準備":"🏥"
+};
+
+function render(){
+  var keys = Object.keys(DATA);
+  for (var k = 0; k < keys.length; k++){
+    var key = keys[k];
+    var group = DATA[key];
+    var panel = document.getElementById(PANEL_MAP[key]);
+    panel.innerHTML = "";
+
+    var titleEl = document.createElement("div");
+    titleEl.className = "priority-title";
+    var dot = document.createElement("span");
+    dot.className = "dot";
+    dot.style.background = group.band;
+    titleEl.appendChild(dot);
+    var titleText = document.createElement("span");
+    titleText.textContent = group.title;
+    titleEl.appendChild(titleText);
+    panel.appendChild(titleEl);
+
+    for (var ci = 0; ci < group.cats.length; ci++){
+      var cat = group.cats[ci];
+      var catEl = document.createElement("div");
+      catEl.className = "category";
+
+      var head = document.createElement("div");
+      head.className = "cat-head";
+      var doneCount = 0;
+      for (var x = 0; x < cat.items.length; x++){ if (cat.items[x].done) doneCount++; }
+
+      var iconBadge = document.createElement("span");
+      iconBadge.className = "cat-icon";
+      iconBadge.style.background = group.bandBg;
+      iconBadge.textContent = CATEGORY_ICONS[cat.name] || "✨";
+      head.appendChild(iconBadge);
+
+      var h2 = document.createElement("h2");
+      h2.textContent = cat.name;
+      var progSpan = document.createElement("span");
+      progSpan.className = "cat-progress";
+      progSpan.textContent = doneCount + " / " + cat.items.length;
+      head.appendChild(h2);
+      head.appendChild(progSpan);
+      catEl.appendChild(head);
+
+      var table = document.createElement("table");
+      for (var ii = 0; ii < cat.items.length; ii++){
+        var item = cat.items[ii];
+        var rowId = key + "-" + ci + "-" + ii;
+        var tr = document.createElement("tr");
+
+        var tdCheck = document.createElement("td");
+        tdCheck.className = "check-col";
+        var cb = document.createElement("span");
+        cb.className = "checkbox" + (item.done ? " checked" : "");
+        cb.setAttribute("data-key", key);
+        cb.setAttribute("data-ci", ci);
+        cb.setAttribute("data-ii", ii);
+        if (item.done) { cb.style.background = group.band; cb.style.borderColor = group.band; }
+        tdCheck.appendChild(cb);
+
+        var tdItem = document.createElement("td");
+
+        if (item.editing) {
+          var renameInput = document.createElement("input");
+          renameInput.type = "text";
+          renameInput.className = "rename-input";
+          renameInput.value = item.t;
+          renameInput.setAttribute("data-key", key);
+          renameInput.setAttribute("data-ci", ci);
+          renameInput.setAttribute("data-ii", ii);
+          tdItem.appendChild(renameInput);
+        } else {
+          var itemSpan = document.createElement("span");
+          itemSpan.className = "item-text" + (item.done ? " checked" : "");
+          itemSpan.textContent = item.t;
+          itemSpan.setAttribute("data-key", key);
+          itemSpan.setAttribute("data-ci", ci);
+          itemSpan.setAttribute("data-ii", ii);
+          tdItem.appendChild(itemSpan);
+
+          var renameBtn = document.createElement("button");
+          renameBtn.type = "button";
+          renameBtn.className = "memo-btn";
+          renameBtn.textContent = "✏️";
+          renameBtn.setAttribute("data-rename-toggle", rowId);
+          tdItem.appendChild(renameBtn);
+
+          var memoBtn = document.createElement("button");
+          memoBtn.type = "button";
+          memoBtn.className = "memo-btn" + (item.memo ? " has-memo" : "");
+          memoBtn.textContent = item.memo ? "📝" : "💬";
+          memoBtn.setAttribute("data-memo-toggle", rowId);
+          tdItem.appendChild(memoBtn);
+
+          if (item.isCustom) {
+            var delBtn = document.createElement("button");
+            delBtn.type = "button";
+            delBtn.className = "del-btn";
+            delBtn.textContent = "🗑️";
+            delBtn.setAttribute("data-del-key", key);
+            delBtn.setAttribute("data-del-ci", ci);
+            delBtn.setAttribute("data-del-ii", ii);
+            tdItem.appendChild(delBtn);
+          }
+
+          var buyBtn = document.createElement("button");
+          buyBtn.type = "button";
+          var hasBuy = item.price || item.buyStore;
+          buyBtn.className = "buy-btn" + (hasBuy ? " has-buy" : "");
+          buyBtn.textContent = hasBuy ? "✅" : "💰";
+          buyBtn.setAttribute("data-buy-toggle", rowId);
+          tdItem.appendChild(buyBtn);
+        }
+
+        var tdNote = document.createElement("td");
+        tdNote.className = "note-col";
+        if (item.editingNote) {
+          var noteInput = document.createElement("input");
+          noteInput.type = "text";
+          noteInput.className = "note-input";
+          noteInput.placeholder = "購入予定の店舗";
+          noteInput.value = item.n;
+          noteInput.setAttribute("data-key", key);
+          noteInput.setAttribute("data-ci", ci);
+          noteInput.setAttribute("data-ii", ii);
+          tdNote.appendChild(noteInput);
+        } else {
+          var noteTag = document.createElement("span");
+          noteTag.className = "note-tag";
+          noteTag.textContent = item.n || "＋購入予定を入力";
+          noteTag.setAttribute("data-note-toggle", rowId);
+          tdNote.appendChild(noteTag);
+        }
+        if (item.price) {
+          var purchasedTag = document.createElement("span");
+          purchasedTag.className = "purchased-tag";
+          var priceNum = Number(item.price) || 0;
+          var tagText = "¥" + priceNum.toLocaleString("ja-JP");
+          if (item.buyStore) tagText += "・" + item.buyStore;
+          if (item.buyer) tagText += "・" + item.buyer;
+          purchasedTag.textContent = tagText;
+          tdNote.appendChild(purchasedTag);
+        }
+
+        tr.appendChild(tdCheck);
+        tr.appendChild(tdItem);
+        tr.appendChild(tdNote);
+        table.appendChild(tr);
+
+        var memoTr = document.createElement("tr");
+        memoTr.className = "memo-row hidden";
+        memoTr.setAttribute("data-memo-row", rowId);
+        var memoTd = document.createElement("td");
+        memoTd.colSpan = 3;
+        var memoTextarea = document.createElement("textarea");
+        memoTextarea.className = "memo-input";
+        memoTextarea.placeholder = "メモを入力…";
+        memoTextarea.value = item.memo;
+        memoTextarea.setAttribute("data-key", key);
+        memoTextarea.setAttribute("data-ci", ci);
+        memoTextarea.setAttribute("data-ii", ii);
+        memoTd.appendChild(memoTextarea);
+        memoTr.appendChild(memoTd);
+        table.appendChild(memoTr);
+
+        var buyTr = document.createElement("tr");
+        buyTr.className = "buy-row hidden";
+        buyTr.setAttribute("data-buy-row", rowId);
+        var buyTd = document.createElement("td");
+        buyTd.colSpan = 3;
+        var buyForm = document.createElement("div");
+        buyForm.className = "buy-form";
+        var buyStoreInput = document.createElement("input");
+        buyStoreInput.type = "text";
+        buyStoreInput.className = "buy-store-input";
+        buyStoreInput.placeholder = "購入した店舗（例: 西松屋）";
+        buyStoreInput.value = item.buyStore;
+        buyStoreInput.setAttribute("data-key", key);
+        buyStoreInput.setAttribute("data-ci", ci);
+        buyStoreInput.setAttribute("data-ii", ii);
+        var buyPriceInput = document.createElement("input");
+        buyPriceInput.type = "number";
+        buyPriceInput.className = "buy-price-input";
+        buyPriceInput.placeholder = "金額（円）";
+        buyPriceInput.value = item.price;
+        buyPriceInput.setAttribute("data-key", key);
+        buyPriceInput.setAttribute("data-ci", ci);
+        buyPriceInput.setAttribute("data-ii", ii);
+        var buyBuyerInput = document.createElement("input");
+        buyBuyerInput.type = "text";
+        buyBuyerInput.className = "buy-buyer-input";
+        buyBuyerInput.placeholder = "購入者（例: 夫）";
+        buyBuyerInput.value = item.buyer;
+        buyBuyerInput.setAttribute("data-key", key);
+        buyBuyerInput.setAttribute("data-ci", ci);
+        buyBuyerInput.setAttribute("data-ii", ii);
+        buyForm.appendChild(buyStoreInput);
+        buyForm.appendChild(buyPriceInput);
+        buyForm.appendChild(buyBuyerInput);
+        buyTd.appendChild(buyForm);
+        buyTr.appendChild(buyTd);
+        table.appendChild(buyTr);
+      }
+
+      var addRow = document.createElement("tr");
+      addRow.className = "add-item-row";
+      var addTd = document.createElement("td");
+      addTd.colSpan = 3;
+      var addForm = document.createElement("div");
+      addForm.className = "add-item-form";
+      var addInput = document.createElement("input");
+      addInput.type = "text";
+      addInput.className = "add-item-input";
+      addInput.placeholder = "新しい項目を追加…";
+      addInput.setAttribute("data-add-key", key);
+      addInput.setAttribute("data-add-ci", ci);
+      var addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "add-item-btn";
+      addBtn.textContent = "＋ 追加";
+      addBtn.setAttribute("data-add-key", key);
+      addBtn.setAttribute("data-add-ci", ci);
+      addForm.appendChild(addInput);
+      addForm.appendChild(addBtn);
+      addTd.appendChild(addForm);
+      addRow.appendChild(addTd);
+      table.appendChild(addRow);
+
+      catEl.appendChild(table);
+      panel.appendChild(catEl);
+    }
+  }
+  updateTally();
+  updateTotal();
+  renderPriceComparison();
+}
+
+// ---- GitHub-backed storage config ----
+var GITHUB_OWNER = "s-banana";
+var GITHUB_REPO = "s-banana.github.io";
+var GITHUB_BRANCH = "main";
+var GITHUB_DATA_PATH = "baby-checklist-data.json";
+var GITHUB_TOKEN_KEY = "baby-checklist-gh-token"; // localStorage key, browser-only, never committed
+
+function getGithubToken(){
+  try { return localStorage.getItem(GITHUB_TOKEN_KEY) || ""; }
+  catch (err) { return ""; }
+}
+
+function setupGithubToken(){
+  var current = getGithubToken();
+  var entered = window.prompt(
+    "GitHub Personal Access Token を入力してください。\n" +
+    "このブラウザだけに保存され、コードやリポジトリには一切含まれません。\n" +
+    "空にして OK を押すとトークンを削除します。",
+    current
+  );
+  if (entered === null) return; // cancelled
+  try {
+    if (entered.trim()) {
+      localStorage.setItem(GITHUB_TOKEN_KEY, entered.trim());
+      showSaveNotice("トークンを保存しました");
+    } else {
+      localStorage.removeItem(GITHUB_TOKEN_KEY);
+      showSaveNotice("トークンを削除しました");
+    }
+  } catch (err) {
+    showSaveNotice("トークンの保存に失敗しました", true);
+  }
+}
+
+function utf8ToBase64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function base64ToUtf8(str){
+  return decodeURIComponent(escape(atob(str.replace(/\n/g, ""))));
+}
+
+async function ghGetFile(){
+  var token = getGithubToken();
+  var url = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO +
+    "/contents/" + GITHUB_DATA_PATH + "?ref=" + GITHUB_BRANCH + "&t=" + Date.now();
+  var headers = { "Accept": "application/vnd.github+json" };
+  if (token) headers["Authorization"] = "token " + token;
+  var res = await fetch(url, { headers: headers, cache: "no-store" });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error("GitHub取得エラー: " + res.status);
+  var data = await res.json();
+  return { sha: data.sha, content: base64ToUtf8(data.content) };
+}
+
+async function ghPutFile(contentStr, sha){
+  var token = getGithubToken();
+  if (!token) throw new Error("GitHubトークンが未設定です");
+  var url = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO +
+    "/contents/" + GITHUB_DATA_PATH;
+  var body = {
+    message: "update checklist data",
+    content: utf8ToBase64(contentStr),
+    branch: GITHUB_BRANCH
+  };
+  if (sha) body.sha = sha;
+  var res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Accept": "application/vnd.github+json",
+      "Authorization": "token " + token,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    var errText = "";
+    try { errText = (await res.json()).message; } catch (e) {}
+    var err = new Error("GitHub保存エラー " + res.status + (errText ? ": " + errText : ""));
+    err.status = res.status;
+    throw err;
+  }
+  return await res.json();
+}
+
+// 409（他の保存と競合してshaが古くなった場合）は、最新のshaを取り直して
+// 自動的に再試行する。それでも競合する場合のみ、エラーとして呼び出し元に伝える。
+async function saveWithRetry(maxAttempts){
+  maxAttempts = maxAttempts || 3;
+  var lastErr = null;
+  for (var attempt = 0; attempt < maxAttempts; attempt++){
+    var current = await ghGetFile();
+    var payload = JSON.stringify(collectState(), null, 2);
+    try {
+      await ghPutFile(payload, current ? current.sha : null);
+      return payload;
+    } catch (err) {
+      lastErr = err;
+      if (err && err.status === 409) {
+        continue; // 最新のshaを取り直してもう一度
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
+}
+
+var saveDebounceTimer = null;
+function scheduleSave(){
+  showSaveNotice("保存待機中…");
+  if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+  saveDebounceTimer = setTimeout(function(){
+    saveDebounceTimer = null;
+    saveState();
+  }, 1500);
+}
+
+function toggle(key, ci, ii){
+  DATA[key].cats[ci].items[ii].done = !DATA[key].cats[ci].items[ii].done;
+  render();
+  scheduleSave();
+}
+
+function updateMemo(key, ci, ii, text){
+  DATA[key].cats[ci].items[ii].memo = text;
+  scheduleSave();
+}
+
+function toggleRenameEdit(key, ci, ii){
+  var item = DATA[key].cats[ci].items[ii];
+  item.editing = !item.editing;
+  render();
+  if (item.editing) {
+    var sel = '.rename-input[data-key="' + key + '"][data-ci="' + ci + '"][data-ii="' + ii + '"]';
+    var input = document.querySelector(sel);
+    if (input) { input.focus(); input.select(); }
+  }
+}
+
+function toggleNoteEdit(key, ci, ii){
+  var item = DATA[key].cats[ci].items[ii];
+  item.editingNote = !item.editingNote;
+  render();
+  if (item.editingNote) {
+    var sel = '.note-input[data-key="' + key + '"][data-ci="' + ci + '"][data-ii="' + ii + '"]';
+    var input = document.querySelector(sel);
+    if (input) { input.focus(); input.select(); }
+  }
+}
+
+function commitNote(key, ci, ii, newText){
+  var item = DATA[key].cats[ci].items[ii];
+  item.n = (newText || "").trim();
+  item.editingNote = false;
+  render();
+  scheduleSave();
+}
+
+function updateBuyStore(key, ci, ii, text){
+  DATA[key].cats[ci].items[ii].buyStore = text;
+  scheduleSave();
+}
+
+function updateBuyer(key, ci, ii, text){
+  DATA[key].cats[ci].items[ii].buyer = text;
+  updateTotal();
+  scheduleSave();
+}
+
+function updateBuyPrice(key, ci, ii, value){
+  var num = value === "" ? "" : Number(value);
+  if (num !== "" && isNaN(num)) num = "";
+  DATA[key].cats[ci].items[ii].price = num;
+  updateTotal();
+  scheduleSave();
+}
+
+function updateTotal(){
+  var total = 0;
+  var byBuyer = {};
+  var unspecified = 0;
+  var keys = Object.keys(DATA);
+  for (var k = 0; k < keys.length; k++){
+    var cats = DATA[keys[k]].cats;
+    for (var ci = 0; ci < cats.length; ci++){
+      for (var ii = 0; ii < cats[ci].items.length; ii++){
+        var item = cats[ci].items[ii];
+        var p = Number(item.price);
+        if (!isNaN(p) && p > 0) {
+          total += p;
+          var buyerName = (item.buyer || "").trim();
+          if (buyerName) {
+            byBuyer[buyerName] = (byBuyer[buyerName] || 0) + p;
+          } else {
+            unspecified += p;
+          }
+        }
+      }
+    }
+  }
+  var el = document.getElementById("totalValue");
+  if (el) el.textContent = "¥" + total.toLocaleString("ja-JP");
+
+  var breakdownEl = document.getElementById("breakdownRow");
+  if (breakdownEl) {
+    breakdownEl.innerHTML = "";
+    var buyerNames = Object.keys(byBuyer).sort();
+    buyerNames.forEach(function(name){
+      var chip = document.createElement("span");
+      chip.className = "breakdown-chip";
+      chip.textContent = name + " ¥" + byBuyer[name].toLocaleString("ja-JP");
+      breakdownEl.appendChild(chip);
+    });
+    if (unspecified > 0) {
+      var chip2 = document.createElement("span");
+      chip2.className = "breakdown-chip";
+      chip2.textContent = "購入者未設定 ¥" + unspecified.toLocaleString("ja-JP");
+      breakdownEl.appendChild(chip2);
+    }
+  }
+}
+
+function commitRename(key, ci, ii, newText){
+  var item = DATA[key].cats[ci].items[ii];
+  var trimmed = (newText || "").trim();
+  if (trimmed) item.t = trimmed;
+  item.editing = false;
+  render();
+  scheduleSave();
+}
+
+function addItem(key, ci, text){
+  var trimmed = (text || "").trim();
+  if (!trimmed) return;
+  DATA[key].cats[ci].items.push({ t: trimmed, n: "", done: false, memo: "", isCustom: true, buyStore: "", price: "", buyer: "" });
+  render();
+  scheduleSave();
+}
+
+function deleteItem(key, ci, ii){
+  DATA[key].cats[ci].items.splice(ii, 1);
+  render();
+  scheduleSave();
+}
+
+function collectState(){
+  var done = {};
+  var memo = {};
+  var names = {};
+  var notes = {};
+  var buyStore = {};
+  var price = {};
+  var buyer = {};
+  var customItems = {};
+  var keys = Object.keys(DATA);
+  for (var k = 0; k < keys.length; k++){
+    var cats = DATA[keys[k]].cats;
+    for (var ci = 0; ci < cats.length; ci++){
+      var customTexts = [];
+      for (var ii = 0; ii < cats[ci].items.length; ii++){
+        var it = cats[ci].items[ii];
+        var id = keys[k] + "-" + ci + "-" + ii;
+        if (it.done) done[id] = true;
+        if (it.memo) memo[id] = it.memo;
+        if (it.buyStore) buyStore[id] = it.buyStore;
+        if (it.price !== "" && it.price !== null && typeof it.price !== "undefined") price[id] = it.price;
+        if (it.buyer) buyer[id] = it.buyer;
+        if (it.isCustom) {
+          customTexts.push({ t: it.t, n: it.n });
+        } else {
+          var defaultText = DEFAULT_TEXT[id];
+          if (defaultText !== undefined && it.t !== defaultText) names[id] = it.t;
+          var defaultNote = DEFAULT_NOTE[id];
+          if (defaultNote !== undefined && it.n !== defaultNote) notes[id] = it.n;
+        }
+      }
+      if (customTexts.length) customItems[keys[k] + "-" + ci] = customTexts;
+    }
+  }
+  return { done: done, memo: memo, names: names, notes: notes, buyStore: buyStore, price: price, buyer: buyer, customItems: customItems };
+}
+
+function applyState(state){
+  var done = (state && state.done) ? state.done : {};
+  var memo = (state && state.memo) ? state.memo : {};
+  var names = (state && state.names) ? state.names : {};
+  var notes = (state && state.notes) ? state.notes : {};
+  var buyStoreMap = (state && state.buyStore) ? state.buyStore : {};
+  var priceMap = (state && state.price) ? state.price : {};
+  var buyerMap = (state && state.buyer) ? state.buyer : {};
+  var customItems = (state && state.customItems) ? state.customItems : {};
+
+  // First, re-add any custom items in their saved order so indices line up.
+  var catKeys = Object.keys(customItems);
+  for (var c = 0; c < catKeys.length; c++){
+    var parts = catKeys[c].split("-");
+    var gk = parts[0];
+    var ci = parseInt(parts[1], 10);
+    if (!DATA[gk] || !DATA[gk].cats[ci]) continue;
+    var entries = customItems[catKeys[c]];
+    for (var t2 = 0; t2 < entries.length; t2++){
+      var entry = entries[t2];
+      var entryText = (typeof entry === "string") ? entry : entry.t;
+      var entryNote = (typeof entry === "string") ? "" : (entry.n || "");
+      DATA[gk].cats[ci].items.push({ t: entryText, n: entryNote, done: false, memo: "", isCustom: true, buyStore: "", price: "", buyer: "" });
+    }
+  }
+
+  var keys = Object.keys(DATA);
+  for (var k = 0; k < keys.length; k++){
+    var cats = DATA[keys[k]].cats;
+    for (var ci2 = 0; ci2 < cats.length; ci2++){
+      for (var ii = 0; ii < cats[ci2].items.length; ii++){
+        var id = keys[k] + "-" + ci2 + "-" + ii;
+        var item = cats[ci2].items[ii];
+        item.done = !!done[id];
+        item.memo = memo[id] || "";
+        item.buyStore = buyStoreMap[id] || "";
+        item.price = (typeof priceMap[id] !== "undefined") ? priceMap[id] : "";
+        item.buyer = buyerMap[id] || "";
+        if (!item.isCustom && names[id]) {
+          item.t = names[id];
+        }
+        if (!item.isCustom && notes[id] !== undefined) {
+          item.n = notes[id];
+        }
+      }
+    }
+  }
+}
+
+var saveInFlight = null;
+
+async function saveState(){
+  if (!getGithubToken()) {
+    showSaveNotice("GitHubトークンが未設定です（🔑ボタンから設定）", true);
+    return;
+  }
+  try {
+    await saveWithRetry();
+    showSaveNotice("保存しました（GitHubにコミット）");
+  } catch (err) {
+    showSaveNotice("保存エラー: " + (err && err.message ? err.message : String(err)), true);
+  }
+}
+
+async function loadState(){
+  try {
+    var rawUrl = "https://raw.githubusercontent.com/" + GITHUB_OWNER + "/" + GITHUB_REPO +
+      "/" + GITHUB_BRANCH + "/" + GITHUB_DATA_PATH + "?t=" + Date.now();
+    var res = await fetch(rawUrl, { cache: "no-store" });
+    if (res.ok) {
+      var text = await res.text();
+      var state = JSON.parse(text);
+      applyState(state);
+    }
+  } catch (err) {
+    // First-ever load / file not created yet — start fresh, no need to surface this.
+  }
+}
+
+function showSaveNotice(msg, isError){
+  var el = document.getElementById("saveNotice");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.toggle("is-error", !!isError);
+  el.style.opacity = "1";
+  setTimeout(function(){ el.style.opacity = "0"; }, 1800);
+}
+
+function updateTally(){
+  var total = 0, done = 0;
+  var keys = Object.keys(DATA);
+  for (var k = 0; k < keys.length; k++){
+    var cats = DATA[keys[k]].cats;
+    for (var ci = 0; ci < cats.length; ci++){
+      for (var ii = 0; ii < cats[ci].items.length; ii++){
+        total++;
+        if (cats[ci].items[ii].done) done++;
+      }
+    }
+  }
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById("tallyLabel").textContent = "進捗 " + done + " / " + total + "（" + pct + "%）";
+  document.getElementById("progressFill").style.width = pct + "%";
+}
+
+async function verifySave(){
+  var statusEl = document.getElementById("saveStatus");
+  if (!statusEl) return;
+
+  if (!getGithubToken()) {
+    statusEl.textContent = "❌ GitHubトークンが未設定です（🔑ボタンから設定してください）";
+    return;
+  }
+
+  statusEl.textContent = "保存中…";
+
+  var payload;
+  try {
+    payload = await saveWithRetry();
+  } catch (err) {
+    statusEl.textContent = "❌ 保存エラー: " + (err && err.message ? err.message : String(err));
+    return;
+  }
+
+  try {
+    var verify = await ghGetFile();
+    if (verify && verify.content === payload) {
+      statusEl.textContent = "✅ 保存OK・読み直しも一致しました（" + new Date().toLocaleTimeString("ja-JP") + "）";
+    } else if (verify) {
+      statusEl.textContent = "⚠️ 保存はできましたが、読み直した内容が一致しません";
+    } else {
+      statusEl.textContent = "⚠️ 保存はできましたが、読み直しで結果が空でした";
+    }
+  } catch (err) {
+    statusEl.textContent = "⚠️ 保存はできましたが、読み直しでエラー: " + (err && err.message ? err.message : String(err));
+  }
+}
+
+async function init(){
+  document.addEventListener("click", function(e){
+    var t = e.target;
+    if (t.className && (t.className.indexOf("checkbox") !== -1 || t.className.indexOf("item-text") !== -1)) {
+      var key = t.getAttribute("data-key");
+      var ci = parseInt(t.getAttribute("data-ci"), 10);
+      var ii = parseInt(t.getAttribute("data-ii"), 10);
+      toggle(key, ci, ii);
+      return;
+    }
+    if (t.hasAttribute && t.hasAttribute("data-memo-toggle")) {
+      var rowId = t.getAttribute("data-memo-toggle");
+      var memoRow = document.querySelector('[data-memo-row="' + rowId + '"]');
+      if (memoRow) {
+        memoRow.classList.toggle("hidden");
+        if (!memoRow.classList.contains("hidden")) {
+          var ta = memoRow.querySelector("textarea");
+          if (ta) ta.focus();
+        }
+      }
+      return;
+    }
+    if (t.hasAttribute && t.hasAttribute("data-note-toggle")) {
+      var noteId = t.getAttribute("data-note-toggle");
+      var noteParts = noteId.split("-");
+      toggleNoteEdit(noteParts[0], parseInt(noteParts[1], 10), parseInt(noteParts[2], 10));
+      return;
+    }
+    if (t.hasAttribute && t.hasAttribute("data-buy-toggle")) {
+      var buyId = t.getAttribute("data-buy-toggle");
+      var buyRow = document.querySelector('[data-buy-row="' + buyId + '"]');
+      if (buyRow) {
+        buyRow.classList.toggle("hidden");
+        if (!buyRow.classList.contains("hidden")) {
+          var bi = buyRow.querySelector(".buy-store-input");
+          if (bi) bi.focus();
+        }
+      }
+      return;
+    }
+    if (t.hasAttribute && t.hasAttribute("data-rename-toggle")) {
+      var rnId = t.getAttribute("data-rename-toggle");
+      var rnParts = rnId.split("-");
+      toggleRenameEdit(rnParts[0], parseInt(rnParts[1], 10), parseInt(rnParts[2], 10));
+      return;
+    }
+    if (t.hasAttribute && t.hasAttribute("data-del-key")) {
+      var dKey = t.getAttribute("data-del-key");
+      var dCi = parseInt(t.getAttribute("data-del-ci"), 10);
+      var dIi = parseInt(t.getAttribute("data-del-ii"), 10);
+      deleteItem(dKey, dCi, dIi);
+      return;
+    }
+    if (t.className && t.className.indexOf("add-item-btn") !== -1) {
+      var aKey = t.getAttribute("data-add-key");
+      var aCi = parseInt(t.getAttribute("data-add-ci"), 10);
+      var inputEl = t.parentElement.querySelector(".add-item-input");
+      if (inputEl) {
+        addItem(aKey, aCi, inputEl.value);
+        inputEl.value = "";
+      }
+      return;
+    }
+    if (t.id === "manualSaveBtn") {
+      verifySave();
+      return;
+    }
+    if (t.id === "tokenSetupBtn") {
+      setupGithubToken();
+      return;
+    }
+    if (t.className && t.className.indexOf("tab-btn") !== -1) {
+      var btns = document.querySelectorAll(".tab-btn");
+      for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+      var panels = document.querySelectorAll(".panel");
+      for (var j = 0; j < panels.length; j++) panels[j].classList.remove("active");
+      t.classList.add("active");
+      document.getElementById(t.getAttribute("data-panel")).classList.add("active");
+    }
+  });
+
+  document.addEventListener("focusout", function(e){
+    var t = e.target;
+    if (t.tagName === "TEXTAREA" && t.className.indexOf("memo-input") !== -1) {
+      var key = t.getAttribute("data-key");
+      var ci = parseInt(t.getAttribute("data-ci"), 10);
+      var ii = parseInt(t.getAttribute("data-ii"), 10);
+      updateMemo(key, ci, ii, t.value);
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("rename-input") !== -1) {
+      var rKey = t.getAttribute("data-key");
+      var rCi = parseInt(t.getAttribute("data-ci"), 10);
+      var rIi = parseInt(t.getAttribute("data-ii"), 10);
+      commitRename(rKey, rCi, rIi, t.value);
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("note-input") !== -1) {
+      var nKey = t.getAttribute("data-key");
+      var nCi = parseInt(t.getAttribute("data-ci"), 10);
+      var nIi = parseInt(t.getAttribute("data-ii"), 10);
+      commitNote(nKey, nCi, nIi, t.value);
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("buy-store-input") !== -1) {
+      var bsKey = t.getAttribute("data-key");
+      var bsCi = parseInt(t.getAttribute("data-ci"), 10);
+      var bsIi = parseInt(t.getAttribute("data-ii"), 10);
+      updateBuyStore(bsKey, bsCi, bsIi, t.value);
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("buy-price-input") !== -1) {
+      var bpKey = t.getAttribute("data-key");
+      var bpCi = parseInt(t.getAttribute("data-ci"), 10);
+      var bpIi = parseInt(t.getAttribute("data-ii"), 10);
+      updateBuyPrice(bpKey, bpCi, bpIi, t.value);
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("buy-buyer-input") !== -1) {
+      var buKey = t.getAttribute("data-key");
+      var buCi = parseInt(t.getAttribute("data-ci"), 10);
+      var buIi = parseInt(t.getAttribute("data-ii"), 10);
+      updateBuyer(buKey, buCi, buIi, t.value);
+    }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Enter") return;
+    var t = e.target;
+    if (t.tagName === "INPUT" && t.className.indexOf("rename-input") !== -1) {
+      e.preventDefault();
+      t.blur();
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("note-input") !== -1) {
+      e.preventDefault();
+      t.blur();
+    }
+    if (t.tagName === "INPUT" && t.className.indexOf("add-item-input") !== -1) {
+      e.preventDefault();
+      var aKey = t.getAttribute("data-add-key");
+      var aCi = parseInt(t.getAttribute("data-add-ci"), 10);
+      addItem(aKey, aCi, t.value);
+      t.value = "";
+    }
+  });
+
+  try {
+    render();
+  } catch (err) {
+    // Rendering failure — fail silently rather than surfacing a console warning to the user
+  }
+  try {
+    await loadState();
+    render();
+  } catch (err) {
+    // Loading saved state failed — page still works with defaults
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>

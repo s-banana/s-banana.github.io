@@ -3,63 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>公開テストページ</title>
-<style>
-  :root {
-    color-scheme: light dark;
-  }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
-  }
-  .card {
-    max-width: 480px;
-    padding: 48px 40px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    text-align: center;
-  }
-  .badge {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 999px;
-    background: #e8f5e9;
-    color: #2e7d32;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  h1 {
-    font-size: 24px;
-    margin: 0 0 12px;
-  }
-  p {
-    font-size: 15px;
-    line-height: 1.7;
-    color: #555;
-    margin: 0 0 8px;
-  }
-  .meta {
-    margin-top: 24px;
-    font-size: 12px;
-    color: #999;
-  }
-</style>
+<title>Top | s-banana's Web</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="card">
-    <span class="badge">公開テスト成功</span>
-    <h1>このページが見えていれば公開設定は完了です</h1>
-    <p>ここは GitHub Pages の動作確認用プレースホルダーです。</p>
-    <p>本番のWebページは別プロジェクトで作成し、このファイルを置き換えて公開します。</p>
-    <div class="meta">index.html を差し替えるだけで内容を更新できます</div>
-  </div>
+  <header class="site-header">
+    <h1>s-banana's Web</h1>
+    <p>ここがTopページです。下のカードから各ページを行き来できます。</p>
+  </header>
+
+  <main>
+    <div class="card-grid">
+
+      <!-- カードは自由に複製・編集してください -->
+      <a class="card" href="page1.html">
+        <span class="badge">準備中</span>
+        <h2>ページ1</h2>
+        <p>ここにページの説明文を入れてください。</p>
+      </a>
+
+      <a class="card" href="page2.html">
+        <span class="badge">準備中</span>
+        <h2>ページ2</h2>
+        <p>ここにページの説明文を入れてください。</p>
+      </a>
+
+      <a class="card" href="page3.html">
+        <span class="badge">準備中</span>
+        <h2>ページ3</h2>
+        <p>ここにページの説明文を入れてください。</p>
+      </a>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 s-banana
+  </footer>
 </body>
 </html>

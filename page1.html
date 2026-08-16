@@ -979,10 +979,10 @@ function base64ToUtf8(str){
 async function ghGetFile(){
   var token = getGithubToken();
   var url = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO +
-    "/contents/" + GITHUB_DATA_PATH + "?ref=" + GITHUB_BRANCH;
+    "/contents/" + GITHUB_DATA_PATH + "?ref=" + GITHUB_BRANCH + "&t=" + Date.now();
   var headers = { "Accept": "application/vnd.github+json" };
   if (token) headers["Authorization"] = "token " + token;
-  var res = await fetch(url, { headers: headers });
+  var res = await fetch(url, { headers: headers, cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("GitHub取得エラー: " + res.status);
   var data = await res.json();
@@ -1012,9 +1012,33 @@ async function ghPutFile(contentStr, sha){
   if (!res.ok) {
     var errText = "";
     try { errText = (await res.json()).message; } catch (e) {}
-    throw new Error("GitHub保存エラー " + res.status + (errText ? ": " + errText : ""));
+    var err = new Error("GitHub保存エラー " + res.status + (errText ? ": " + errText : ""));
+    err.status = res.status;
+    throw err;
   }
   return await res.json();
+}
+
+// 409（他の保存と競合してshaが古くなった場合）は、最新のshaを取り直して
+// 自動的に再試行する。それでも競合する場合のみ、エラーとして呼び出し元に伝える。
+async function saveWithRetry(maxAttempts){
+  maxAttempts = maxAttempts || 3;
+  var lastErr = null;
+  for (var attempt = 0; attempt < maxAttempts; attempt++){
+    var current = await ghGetFile();
+    var payload = JSON.stringify(collectState(), null, 2);
+    try {
+      await ghPutFile(payload, current ? current.sha : null);
+      return payload;
+    } catch (err) {
+      lastErr = err;
+      if (err && err.status === 409) {
+        continue; // 最新のshaを取り直してもう一度
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
 }
 
 var saveDebounceTimer = null;
@@ -1249,9 +1273,7 @@ async function saveState(){
     return;
   }
   try {
-    var current = await ghGetFile();
-    var payload = JSON.stringify(collectState(), null, 2);
-    await ghPutFile(payload, current ? current.sha : null);
+    await saveWithRetry();
     showSaveNotice("保存しました（GitHubにコミット）");
   } catch (err) {
     showSaveNotice("保存エラー: " + (err && err.message ? err.message : String(err)), true);
@@ -1310,18 +1332,9 @@ async function verifySave(){
 
   statusEl.textContent = "保存中…";
 
-  var payload = JSON.stringify(collectState(), null, 2);
-
-  var current;
+  var payload;
   try {
-    current = await ghGetFile();
-  } catch (err) {
-    statusEl.textContent = "❌ 取得エラー: " + (err && err.message ? err.message : String(err));
-    return;
-  }
-
-  try {
-    await ghPutFile(payload, current ? current.sha : null);
+    payload = await saveWithRetry();
   } catch (err) {
     statusEl.textContent = "❌ 保存エラー: " + (err && err.message ? err.message : String(err));
     return;

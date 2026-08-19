@@ -1281,13 +1281,13 @@ async function saveState(){
 }
 
 async function loadState(){
+  // raw.githubusercontent.com はCDNキャッシュの影響で、保存直後は
+  // 古い内容（保存前の状態）を返すことがあるため、保存時と同じ
+  // GitHub Contents API（ghGetFile）を使って最新の内容を取得する。
   try {
-    var rawUrl = "https://raw.githubusercontent.com/" + GITHUB_OWNER + "/" + GITHUB_REPO +
-      "/" + GITHUB_BRANCH + "/" + GITHUB_DATA_PATH + "?t=" + Date.now();
-    var res = await fetch(rawUrl, { cache: "no-store" });
-    if (res.ok) {
-      var text = await res.text();
-      var state = JSON.parse(text);
+    var current = await ghGetFile();
+    if (current) {
+      var state = JSON.parse(current.content);
       applyState(state);
     }
   } catch (err) {

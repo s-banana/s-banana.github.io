@@ -511,7 +511,7 @@ var DATA = {
         {t:"哺乳瓶洗い", n:"西松屋", done:true, buyStore:"西松屋", price:739},
         {t:"哺乳びん除菌グッズ", n:"アカチャンホンポ", done:false},
         {t:"母乳パッド", n:"西松屋", done:true, buyStore:"西松屋", price:799},
-        {t:"授乳まくら", n:"", done:true, isCustom:true, buyStore:"楽天", price:4131}
+        {t:"授乳まくら", n:"", done:true, buyStore:"楽天", price:4131}
       ]},
       { name:"ベビー服", items:[
         {t:"コンビ肌着（4枚）", n:"ユニクロ・4枚済", done:true, buyStore:"ユニクロ", price:3790},
@@ -521,7 +521,7 @@ var DATA = {
         {t:"帽子", n:"バースデイ", done:false},
         {t:"スタイ（コニー）", n:"", done:true, buyStore:"楽天", price:3240},
         {t:"ハンガー", n:"西松屋", done:true, buyStore:"西松屋", price:679},
-        {t:"コンビ肌着（2枚）", n:"", done:true, isCustom:true, buyStore:"ユニクロ", price:1500}
+        {t:"コンビ肌着（2枚）", n:"", done:true, buyStore:"ユニクロ", price:1500}
       ]},
       { name:"お風呂・衛生用品", items:[
         {t:"ベビーバス", n:"", done:true},
@@ -531,7 +531,7 @@ var DATA = {
         {t:"お手入れセット（爪切り、くし、ピンセット）", n:"西松屋", done:true, buyStore:"西松屋", price:1379},
         {t:"綿棒", n:"西松屋", done:true, buyStore:"西松屋", price:339},
         {t:"ガーゼハンカチ", n:"西松屋・5枚済", done:false},
-        {t:"ベビーワセリン", n:"西松屋", done:false, isCustom:true}
+        {t:"ベビーワセリン", n:"西松屋", done:false}
       ]},
       { name:"お出かけ・移動", items:[
         {t:"チャイルドシート", n:"要リサーチ", done:true, buyStore:"KATOJI", price:36850}
@@ -553,10 +553,10 @@ var DATA = {
         {t:"抱っこひも（セカンド）", n:"コニー公式", done:true, buyStore:"楽天", price:6939},
         {t:"ベビーカーフック", n:"", done:false},
         {t:"カーステッカー", n:"", done:false},
-        {t:"お出かけバッグ", n:"西松屋", done:true, isCustom:true, buyStore:"西松屋", price:2727},
-        {t:"母子手帳ケース", n:"西松屋", done:true, isCustom:true, buyStore:"西松屋", price:1699},
-        {t:"腹帯", n:"", done:true, isCustom:true, buyStore:"アカチャンホンポ", price:2618},
-        {t:"骨盤ベルト", n:"", done:true, isCustom:true, buyStore:"アカチャンホンポ", price:5280}
+        {t:"お出かけバッグ", n:"西松屋", done:true, buyStore:"西松屋", price:2727},
+        {t:"母子手帳ケース", n:"西松屋", done:true, buyStore:"西松屋", price:1699},
+        {t:"腹帯", n:"", done:true, buyStore:"アカチャンホンポ", price:2618},
+        {t:"骨盤ベルト", n:"", done:true, buyStore:"アカチャンホンポ", price:5280}
       ]},
       { name:"授乳サポート", items:[
         {t:"搾乳機", n:"要リサーチ", done:false},
@@ -566,11 +566,11 @@ var DATA = {
       ]},
       { name:"お部屋環境", items:[
         {t:"温湿度計", n:"", done:true},
-        {t:"おむつストッカー", n:"", done:true, isCustom:true, buyStore:"楽天", price:2831},
-        {t:"その他①", n:"", done:true, isCustom:true, buyStore:"バースデイ", price:9075},
-        {t:"棚類", n:"", done:true, isCustom:true, buyStore:"IKEA", price:26494},
-        {t:"本", n:"", done:true, isCustom:true, buyStore:"積分館", price:2640},
-        {t:"その他②", n:"", done:true, isCustom:true, buyStore:"西松屋", price:9445}
+        {t:"おむつストッカー", n:"", done:true, buyStore:"楽天", price:2831},
+        {t:"その他①", n:"", done:true, buyStore:"バースデイ", price:9075},
+        {t:"棚類", n:"", done:true, buyStore:"IKEA", price:26494},
+        {t:"本", n:"", done:true, buyStore:"積分館", price:2640},
+        {t:"その他②", n:"", done:true, buyStore:"西松屋", price:9445}
       ]}
     ]
   },
@@ -1238,6 +1238,16 @@ function applyState(state){
       var entry = entries[t2];
       var entryText = (typeof entry === "string") ? entry : entry.t;
       var entryNote = (typeof entry === "string") ? "" : (entry.n || "");
+      // 同じテキストの「標準項目」がすでに存在する場合は二重表示になるため追加しない
+      // （過去データの不整合や保存時の重複から表示が増殖するのを防ぐ安全策）
+      var isDuplicateOfDefault = false;
+      for (var di = 0; di < DATA[gk].cats[ci].items.length; di++){
+        if (!DATA[gk].cats[ci].items[di].isCustom && DATA[gk].cats[ci].items[di].t === entryText) {
+          isDuplicateOfDefault = true;
+          break;
+        }
+      }
+      if (isDuplicateOfDefault) continue;
       DATA[gk].cats[ci].items.push({ t: entryText, n: entryNote, done: false, memo: "", isCustom: true, buyStore: "", price: "", buyer: "" });
     }
   }

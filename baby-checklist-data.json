@@ -2,6 +2,7 @@
   "done": {
     "high-0-0": true,
     "high-0-2": true,
+    "high-0-3": true,
     "high-1-1": true,
     "high-1-4": true,
     "high-2-3": true,
@@ -92,6 +93,7 @@
   "price": {
     "high-0-0": 15750,
     "high-0-2": 1380,
+    "high-0-3": 16303,
     "high-1-1": 3188,
     "high-2-3": 739,
     "high-2-5": 799,

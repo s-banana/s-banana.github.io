@@ -52,6 +52,7 @@
     "mid-3-9": true,
     "mid-3-10": true,
     "mid-3-11": true,
+    "mid-3-12": true,
     "hosp-0-6": true,
     "hosp-0-7": true,
     "hosp-0-8": true,
@@ -173,6 +174,7 @@
     "mid-3-9": 3070,
     "mid-3-10": 599,
     "mid-3-11": 306,
+    "mid-3-12": 3069,
     "hosp-0-7": 3990,
     "hosp-0-8": 1678
   },
